@@ -252,7 +252,23 @@ def format_upc_code(value) -> str:
     return str(int(value))
 
 
+def aggregate_pg_rows(pg_rows: pd.DataFrame) -> pd.DataFrame:
+    work = pg_rows.copy()
+    work["UPC Code"] = work["UPC Code"].map(format_upc_code)
+    work["_order"] = range(len(work))
+    aggregated = (
+        work.groupby("UPC Code", as_index=False)
+        .agg(Total_QTY=("Total QTY", "sum"), _order=("_order", "min"))
+        .rename(columns={"Total_QTY": "Total QTY"})
+        .sort_values("_order")
+        .drop(columns="_order")
+    )
+    aggregated["Total QTY"] = aggregated["Total QTY"].astype(int)
+    return aggregated.reset_index(drop=True)
+
+
 def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
+    pg_rows = aggregate_pg_rows(pg_rows)
     wb = load_workbook(io.BytesIO(template_bytes))
     ws = wb[find_template_sheet(wb)]
     hr = find_header_row(ws)
@@ -262,7 +278,9 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
             ws.cell(row=r, column=c).value = None
 
     for i, (_, row) in enumerate(pg_rows.iterrows()):
-        ws.cell(row=hr + 1 + i, column=1).value = format_upc_code(row["UPC Code"])
+        sku_cell = ws.cell(row=hr + 1 + i, column=1)
+        sku_cell.value = row["UPC Code"]
+        sku_cell.number_format = "@"
         ws.cell(row=hr + 1 + i, column=2).value = int(row["Total QTY"])
 
     buf = io.BytesIO()
