@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from copy import copy
 from openpyxl import load_workbook
 import io
 import zipfile
@@ -272,16 +273,30 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
     wb = load_workbook(io.BytesIO(template_bytes))
     ws = wb[find_template_sheet(wb)]
     hr = find_header_row(ws)
+    style_ref_sku = ws.cell(row=hr + 1, column=1)
+    style_ref_qty = ws.cell(row=hr + 1, column=2)
+    sku_font = copy(style_ref_sku.font)
+    sku_alignment = copy(style_ref_sku.alignment)
+    qty_font = copy(style_ref_qty.font)
+    qty_alignment = copy(style_ref_qty.alignment)
+    qty_number_format = style_ref_qty.number_format
 
     for r in range(hr + 1, ws.max_row + 1):
         for c in range(1, ws.max_column + 1):
             ws.cell(row=r, column=c).value = None
 
     for i, (_, row) in enumerate(pg_rows.iterrows()):
-        sku_cell = ws.cell(row=hr + 1 + i, column=1)
+        r = hr + 1 + i
+        sku_cell = ws.cell(row=r, column=1)
+        qty_cell = ws.cell(row=r, column=2)
         sku_cell.value = row["UPC Code"]
         sku_cell.number_format = "@"
-        ws.cell(row=hr + 1 + i, column=2).value = int(row["Total QTY"])
+        sku_cell.font = copy(sku_font)
+        sku_cell.alignment = copy(sku_alignment)
+        qty_cell.value = int(row["Total QTY"])
+        qty_cell.number_format = qty_number_format
+        qty_cell.font = copy(qty_font)
+        qty_cell.alignment = copy(qty_alignment)
 
     buf = io.BytesIO()
     wb.save(buf)
