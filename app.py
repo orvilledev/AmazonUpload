@@ -245,6 +245,13 @@ def find_header_row(ws) -> int:
     return 6
 
 
+def format_upc_code(value) -> str:
+    text = str(value).strip()
+    if "-FNSKU" in text:
+        return text
+    return str(int(value))
+
+
 def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
     wb = load_workbook(io.BytesIO(template_bytes))
     ws = wb[find_template_sheet(wb)]
@@ -255,7 +262,7 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
             ws.cell(row=r, column=c).value = None
 
     for i, (_, row) in enumerate(pg_rows.iterrows()):
-        ws.cell(row=hr + 1 + i, column=1).value = str(int(row["UPC Code"]))
+        ws.cell(row=hr + 1 + i, column=1).value = format_upc_code(row["UPC Code"])
         ws.cell(row=hr + 1 + i, column=2).value = int(row["Total QTY"])
 
     buf = io.BytesIO()
