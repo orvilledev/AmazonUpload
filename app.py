@@ -150,9 +150,24 @@ html, body, .stApp {
     flex-shrink: 0;
 }
 
-/* ── Download button ── */
+/* ── Download buttons ── */
 div[data-testid="stDownloadButton"] {
     margin-top: 4px;
+}
+div[data-testid="stDownloadButton"] > button[kind="secondary"] {
+    width: 100% !important;
+    background: white !important;
+    color: #FF6D00 !important;
+    border: 1.5px solid #FFE0A0 !important;
+    border-radius: 12px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    padding: 12px 0 !important;
+    box-shadow: none !important;
+}
+div[data-testid="stDownloadButton"] > button[kind="secondary"]:hover {
+    background: #FFFAF0 !important;
+    opacity: 1 !important;
 }
 div[data-testid="stDownloadButton"] > button {
     width: 100% !important;
@@ -220,6 +235,8 @@ div[data-testid="stDownloadButton"] > button:hover {
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 TEMPLATE_PATH = Path(__file__).parent / "template.xlsx"
+RAW_TEMPLATE_PATH = Path(__file__).parent / "Amazon Uploader (Micro Tools).xlsx"
+RAW_TEMPLATE_FILENAME = "Amazon Uploader (Micro Tools).xlsx"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -314,6 +331,18 @@ st.markdown("""
 
 # ── Step 1 — Upload ───────────────────────────────────────────────────────────
 st.markdown('<div class="card-label">Step 1 — Source Data</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="card-title">Need a blank template? Download it, fill in your SKUs, then upload below.</div>',
+    unsafe_allow_html=True,
+)
+st.download_button(
+    label="📥   Download RAW Template",
+    data=RAW_TEMPLATE_PATH.read_bytes(),
+    file_name=RAW_TEMPLATE_FILENAME,
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    type="secondary",
+)
+st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
 raw_file = st.file_uploader(
     "Upload RAW File",
     type=["xlsx", "xls"],
