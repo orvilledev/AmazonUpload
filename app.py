@@ -15,220 +15,376 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --primary: #6366f1;
+    --primary-foreground: #ffffff;
+    --ring: #6366f1;
+    --radius: 0.625rem;
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body, .stApp {
-    font-family: 'Inter', sans-serif !important;
-    background: #F0F2F6 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    background: var(--background) !important;
+    color: var(--foreground) !important;
 }
 
-/* ── Hide Streamlit chrome ── */
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
 
-/* ── Page wrapper ── */
 .block-container {
-    max-width: 680px !important;
-    padding: 40px 20px 60px !important;
+    max-width: 640px !important;
+    padding: 48px 24px 64px !important;
 }
 
-/* ── Hero banner ── */
-.hero {
-    background: linear-gradient(135deg, #FF9900 0%, #FF6D00 100%);
-    border-radius: 20px;
-    padding: 36px 40px;
-    margin-bottom: 28px;
-    color: white;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(255,153,0,.35);
+/* ── Typography & layout ── */
+.page-header { margin-bottom: 28px; }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #4338ca;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    padding: 4px 12px;
+    margin-bottom: 16px;
 }
-.hero .icon { font-size: 2.6rem; margin-bottom: 10px; }
-.hero h1 {
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.page-title {
     margin: 0 0 8px;
-    font-size: 1.75rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--foreground);
+    line-height: 1.2;
 }
-.hero p {
+
+.page-subtitle {
     margin: 0;
-    font-size: 0.97rem;
-    opacity: .88;
+    font-size: 0.9375rem;
+    color: var(--muted-foreground);
+    line-height: 1.5;
     font-weight: 400;
 }
 
-/* ── Section card ── */
-.card {
-    background: white;
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 18px;
-    box-shadow: 0 2px 14px rgba(0,0,0,.06);
+/* ── Cards ── */
+.ui-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
 }
-.card-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #888;
-    margin-bottom: 10px;
-}
-.card-title {
-    font-size: 1rem;
+
+.ui-card-title {
+    font-size: 0.9375rem;
     font-weight: 600;
-    color: #1a1a1a;
-    margin-bottom: 4px;
+    color: var(--card-foreground);
+    margin: 0 0 4px;
+}
+
+.ui-card-desc {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.ui-card-desc:last-child { margin-bottom: 0; }
+
+.section-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted-foreground);
+    margin: 0 0 12px;
+}
+
+/* ── Empty / preview state ── */
+.state-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px 24px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.state-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 16px;
+    color: #cbd5e1;
+}
+
+.state-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 0 0 6px;
+}
+
+.state-desc {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── File meta ── */
+.meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+.meta-chip .dot {
+    width: 6px;
+    height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
 }
 
 /* ── Pack group grid ── */
 .pg-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-top: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
 }
+
 .pg-tile {
-    background: #FFF8EE;
-    border: 1.5px solid #FFE0A0;
-    border-radius: 12px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
     padding: 12px 8px;
     text-align: center;
 }
+
 .pg-tile .pg-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #FF9900;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     margin-bottom: 4px;
 }
+
 .pg-tile .pg-count {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: #1a1a1a;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
     line-height: 1;
 }
+
 .pg-tile .pg-unit {
-    font-size: 0.68rem;
-    color: #888;
-    font-weight: 500;
+    font-size: 0.625rem;
+    color: var(--muted-foreground);
     margin-top: 2px;
 }
 
-/* ── Date display pill ── */
-.date-pill {
-    display: inline-block;
-    background: #FFF3E0;
-    border: 1.5px solid #FFE0A0;
-    color: #FF6D00;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    padding: 6px 20px;
-    margin-top: 6px;
+/* ── File list ── */
+.file-list {
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    overflow: hidden;
 }
 
-/* ── File name display ── */
-.file-chip {
+.file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+}
+
+.file-row:last-child { border-bottom: none; }
+
+.file-row .fname {
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+.file-row .fmeta {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+}
+
+/* ── Date display ── */
+.date-display {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #F0FFF4;
-    border: 1.5px solid #86EFAC;
-    color: #166534;
-    border-radius: 8px;
+    margin-top: 12px;
     padding: 8px 14px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    margin-top: 6px;
-}
-.file-chip .dot {
-    width: 8px; height: 8px;
-    background: #22C55E;
-    border-radius: 50%;
-    flex-shrink: 0;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
 }
 
-/* ── Download buttons ── */
-div[data-testid="stDownloadButton"] {
-    margin-top: 4px;
-}
-div[data-testid="stDownloadButton"] > button[kind="secondary"] {
-    width: 100% !important;
-    background: white !important;
-    color: #FF6D00 !important;
-    border: 1.5px solid #FFE0A0 !important;
-    border-radius: 12px !important;
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
-    padding: 12px 0 !important;
-    box-shadow: none !important;
-}
-div[data-testid="stDownloadButton"] > button[kind="secondary"]:hover {
-    background: #FFFAF0 !important;
-    opacity: 1 !important;
-}
-div[data-testid="stDownloadButton"] > button {
-    width: 100% !important;
-    background: linear-gradient(135deg, #FF9900 0%, #FF6D00 100%) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    font-size: 1.05rem !important;
-    font-weight: 700 !important;
-    padding: 16px 0 !important;
-    box-shadow: 0 4px 18px rgba(255,153,0,.4) !important;
-    letter-spacing: 0.01em !important;
-    transition: opacity .15s;
-}
-div[data-testid="stDownloadButton"] > button:hover {
-    opacity: .92 !important;
+/* ── Footer ── */
+.page-footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
 }
 
-/* ── Uploader overrides ── */
+/* ── Streamlit overrides ── */
+[data-testid="stFileUploader"] {
+    margin-top: 0 !important;
+}
 [data-testid="stFileUploader"] section {
-    border: 2px dashed #E0E0E0 !important;
-    border-radius: 12px !important;
-    background: #FAFAFA !important;
-    padding: 20px !important;
+    border: 1px dashed var(--input) !important;
+    border-radius: var(--radius) !important;
+    background: #f8fafc !important;
+    padding: 16px !important;
 }
 [data-testid="stFileUploader"] section:hover {
-    border-color: #FF9900 !important;
-    background: #FFFAF0 !important;
+    border-color: #a5b4fc !important;
+    background: #eef2ff !important;
+}
+[data-testid="stFileUploader"] section > div {
+    padding: 0 !important;
+}
+[data-testid="stFileUploader"] button {
+    background: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border: none !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    box-shadow: none !important;
+}
+[data-testid="stFileUploader"] button:hover {
+    background: #4f46e5 !important;
+    opacity: 1 !important;
+}
+[data-testid="stFileUploader"] small {
+    color: var(--muted-foreground) !important;
+    font-size: 0.75rem !important;
 }
 
-/* ── Date input ── */
+[data-testid="stDateInput"] label { display: none; }
 [data-testid="stDateInput"] input {
-    border-radius: 10px !important;
-    border: 1.5px solid #E0E0E0 !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    padding: 10px 14px !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    border: 1px solid var(--input) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 8px 12px !important;
+    background: var(--card) !important;
+    color: var(--foreground) !important;
 }
 [data-testid="stDateInput"] input:focus {
-    border-color: #FF9900 !important;
-    box-shadow: 0 0 0 3px rgba(255,153,0,.15) !important;
+    border-color: var(--ring) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
 }
 
-/* ── Info box ── */
-.info-box {
-    background: #EFF6FF;
-    border: 1.5px solid #BFDBFE;
-    border-radius: 10px;
-    padding: 14px 18px;
-    color: #1E40AF;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-align: center;
-    margin-top: 4px;
+div[data-testid="stDownloadButton"] { margin: 0 !important; }
+div[data-testid="stDownloadButton"] > button {
+    width: 100% !important;
+    background: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border: none !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 10px 16px !important;
+    box-shadow: none !important;
+    transition: background 0.15s;
+}
+div[data-testid="stDownloadButton"] > button:hover {
+    background: #4f46e5 !important;
+    opacity: 1 !important;
+}
+div[data-testid="stDownloadButton"] > button[kind="secondary"] {
+    background: var(--card) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--input) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+div[data-testid="stDownloadButton"] > button[kind="secondary"]:hover {
+    background: var(--muted) !important;
 }
 
-/* ── Divider ── */
-.divider {
-    border: none;
-    border-top: 1.5px solid #F0F0F0;
-    margin: 20px 0;
+[data-testid="stExpander"] {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    overflow: hidden;
+}
+[data-testid="stExpander"] summary {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--foreground) !important;
+    padding: 12px 16px !important;
+}
+[data-testid="stExpander"] summary:hover {
+    color: var(--primary) !important;
+}
+[data-testid="stExpander"] > div {
+    border-top: 1px solid var(--border) !important;
+    padding: 0 16px 16px !important;
+}
+[data-testid="stExpander"] p, [data-testid="stExpander"] li {
+    font-size: 0.8125rem !important;
+    color: var(--muted-foreground) !important;
+    line-height: 1.6 !important;
+}
+
+[data-testid="stAlert"] {
+    border-radius: var(--radius) !important;
+    border: 1px solid #fecaca !important;
+    background: #fef2f2 !important;
+    font-size: 0.875rem !important;
+}
+
+.st-emotion-cache-1wmy9hl, .st-emotion-cache-16txtl3 {
+    padding-top: 0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -237,6 +393,12 @@ div[data-testid="stDownloadButton"] > button:hover {
 TEMPLATE_PATH = Path(__file__).parent / "template.xlsx"
 RAW_TEMPLATE_PATH = Path(__file__).parent / "Amazon Uploader (Micro Tools).xlsx"
 RAW_TEMPLATE_FILENAME = "Amazon Uploader (Micro Tools).xlsx"
+
+DOC_ICON = """
+<svg class="state-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+</svg>
+"""
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -320,43 +482,54 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
     return buf.getvalue()
 
 
-# ── Hero ──────────────────────────────────────────────────────────────────────
+# ── Page header ───────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="hero">
-    <div class="icon">📦</div>
-    <h1>Amazon FBA Manifest Generator</h1>
-    <p>Upload your RAW file, pick a date, and download all manifests in one click.</p>
+<div class="page-header">
+    <div class="badge"><span class="badge-dot"></span>Amazon FBA · Send to Amazon</div>
+    <h1 class="page-title">Manifest Generator</h1>
+    <p class="page-subtitle">Upload your RAW Excel file, pick a shipment date, and download FBA manifests for every pack group.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Step 1 — Upload ───────────────────────────────────────────────────────────
-st.markdown('<div class="card-label">Step 1 — Source Data</div>', unsafe_allow_html=True)
-st.markdown(
-    '<div class="card-title">Need a blank template? Download it, fill in your SKUs, then upload below.</div>',
-    unsafe_allow_html=True,
-)
+# ── Upload card ───────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="ui-card">
+    <p class="ui-card-title">Upload RAW file</p>
+    <p class="ui-card-desc">Select the filled Excel template from your shipment workflow, or download a blank template first.</p>
+</div>
+""", unsafe_allow_html=True)
+
 st.download_button(
-    label="📥   Download RAW Template",
+    label="Download blank template",
     data=RAW_TEMPLATE_PATH.read_bytes(),
     file_name=RAW_TEMPLATE_FILENAME,
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     type="secondary",
+    use_container_width=True,
 )
-st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+
+st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+
 raw_file = st.file_uploader(
-    "Upload RAW File",
+    "Upload RAW file",
     type=["xlsx", "xls"],
     label_visibility="collapsed",
 )
 
-# ── Step 2 — Date ─────────────────────────────────────────────────────────────
-st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
-st.markdown('<div class="card-label">Step 2 — Shipment Date</div>', unsafe_allow_html=True)
+# ── Date card ─────────────────────────────────────────────────────────────────
+st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+st.markdown("""
+<div class="ui-card">
+    <p class="ui-card-title">Shipment date</p>
+    <p class="ui-card-desc">Used in output filenames, e.g. <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:0.75rem;">CBN PG2 6.4.26.xlsx</code></p>
+</div>
+""", unsafe_allow_html=True)
+
 selected_date = st.date_input("Date", value=datetime.today(), label_visibility="collapsed")
 date_str = f"{selected_date.month}.{selected_date.day}.{str(selected_date.year)[-2:]}"
-st.markdown(f'<div class="date-pill">📅 &nbsp;{date_str}</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="date-display">Shipment date · {date_str}</div>', unsafe_allow_html=True)
 
-# ── Step 3 — Generate ─────────────────────────────────────────────────────────
+# ── Preview / results ─────────────────────────────────────────────────────────
 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
 if raw_file:
@@ -367,18 +540,18 @@ if raw_file:
         pack_groups = sorted(df["Pack Group #"].unique())
         template_bytes = TEMPLATE_PATH.read_bytes()
 
-        # ── File chip ────────────────────────────────────────────────────────
-        st.markdown(
-            f'<div class="file-chip"><div class="dot"></div>{raw_file.name} &nbsp;·&nbsp; '
-            f'<span style="font-weight:400;color:#166534;">{vendor} &nbsp;·&nbsp; '
-            f'{len(pack_groups)} pack groups &nbsp;·&nbsp; {len(df)} SKUs</span></div>',
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-
-        # ── Pack group grid ──────────────────────────────────────────────────
-        st.markdown('<div class="card-label">Pack Groups Detected</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="ui-card">
+            <p class="section-label">Preview</p>
+            <div class="meta-row">
+                <span class="meta-chip"><span class="dot"></span>{raw_file.name}</span>
+                <span class="meta-chip">{vendor}</span>
+                <span class="meta-chip">{len(pack_groups)} pack groups</span>
+                <span class="meta-chip">{len(df)} SKUs</span>
+            </div>
+            <p class="ui-card-title" style="margin-bottom:12px;">Pack groups detected</p>
+        </div>
+        """, unsafe_allow_html=True)
 
         tiles_html = '<div class="pg-grid">'
         for pg in pack_groups:
@@ -392,10 +565,7 @@ if raw_file:
         tiles_html += "</div>"
         st.markdown(tiles_html, unsafe_allow_html=True)
 
-        st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
-
-        # ── Build ZIP ────────────────────────────────────────────────────────
-        st.markdown('<div class="card-label">Step 3 — Download</div>', unsafe_allow_html=True)
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
         zip_buf = io.BytesIO()
         with zipfile.ZipFile(zip_buf, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -407,35 +577,62 @@ if raw_file:
                 )
         zip_buf.seek(0)
 
+        st.markdown("""
+        <div class="ui-card" style="padding-bottom:16px;">
+            <p class="ui-card-title">Download manifests</p>
+            <p class="ui-card-desc" style="margin-bottom:12px;">One Excel file per pack group, bundled in a ZIP archive.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
         st.download_button(
-            label=f"⬇️   Download All {len(pack_groups)} Manifests  ({vendor} · {date_str})",
+            label=f"Download all {len(pack_groups)} manifests ({vendor} · {date_str})",
             data=zip_buf.getvalue(),
             file_name=f"{vendor} FBA Manifests {date_str}.zip",
             mime="application/zip",
+            use_container_width=True,
         )
 
-        # ── File list preview ────────────────────────────────────────────────
         st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
-        st.markdown('<div class="card-label">Files Included in ZIP</div>', unsafe_allow_html=True)
+        st.markdown('<p class="section-label">Files in ZIP</p>', unsafe_allow_html=True)
 
-        rows_html = ""
+        rows_html = '<div class="file-list">'
         for pg in pack_groups:
             n_skus = len(df[df["Pack Group #"] == pg])
             fname = f"{vendor} PG{pg} {date_str}.xlsx"
             rows_html += f"""
-            <div style="display:flex;justify-content:space-between;align-items:center;
-                        padding:10px 0;border-bottom:1px solid #F3F3F3;font-size:0.88rem;">
-                <span style="font-weight:600;color:#1a1a1a;">📄 &nbsp;{fname}</span>
-                <span style="color:#888;font-weight:500;">{n_skus} SKUs</span>
+            <div class="file-row">
+                <span class="fname">{fname}</span>
+                <span class="fmeta">{n_skus} SKUs</span>
             </div>"""
-        st.markdown(f'<div style="background:white;border-radius:12px;padding:4px 20px;box-shadow:0 2px 14px rgba(0,0,0,.06)">{rows_html}</div>', unsafe_allow_html=True)
+        rows_html += "</div>"
+        st.markdown(rows_html, unsafe_allow_html=True)
 
     except Exception as exc:
         st.error(f"Error: {exc}")
         st.exception(exc)
 
 else:
-    st.markdown(
-        '<div class="info-box">📂 &nbsp; Upload your RAW file above to get started.</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(f"""
+    <div class="state-card">
+        {DOC_ICON}
+        <p class="state-title">No file uploaded</p>
+        <p class="state-desc">Drop a RAW Excel file above to preview pack groups and generate manifests.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ── How it works ──────────────────────────────────────────────────────────────
+st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+
+with st.expander("How it works"):
+    st.markdown("""
+1. **Download the blank template** and fill in your SKU data — UPC Code, Vendor, quantities, and Pack Group #.
+2. **Upload the completed RAW file** (.xlsx) using the upload area above.
+3. **Set the shipment date** — this is used in every output filename.
+4. **Download the ZIP** — you'll get one Amazon FBA manifest per pack group, ready for Seller Central.
+    """)
+
+# ── Footer ────────────────────────────────────────────────────────────────────
+st.markdown(
+    '<div class="page-footer">Manifest Generator · Maps UPC &amp; Quantity to Amazon upload templates</div>',
+    unsafe_allow_html=True,
+)
