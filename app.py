@@ -422,7 +422,35 @@ def find_header_row(ws) -> int:
         for cell in row:
             if cell.value and str(cell.value).strip() == "Merchant SKU":
                 return cell.row
-    return 6
+    return 8
+
+
+def copy_cell_style(src, dst) -> None:
+    dst.font = copy(src.font)
+    dst.border = copy(src.border)
+    dst.fill = copy(src.fill)
+    dst.number_format = src.number_format
+    dst.protection = copy(src.protection)
+    dst.alignment = copy(src.alignment)
+
+
+def ensure_default_owners(ws) -> None:
+    """Keep default owner rows at 3–4 with correct labels, values, and formatting."""
+    label_style = ws.cell(row=3, column=1)
+    value_style = ws.cell(row=3, column=2)
+    owners = (
+        (3, "Default prep owner"),
+        (4, "Default labeling owner"),
+    )
+    for row, label in owners:
+        label_cell = ws.cell(row=row, column=1)
+        value_cell = ws.cell(row=row, column=2)
+        if label_cell.value is None:
+            copy_cell_style(label_style, label_cell)
+        if value_cell.value is None:
+            copy_cell_style(value_style, value_cell)
+        label_cell.value = label
+        value_cell.value = "Seller"
 
 
 def format_upc_code(value) -> str:
@@ -452,15 +480,7 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
     wb = load_workbook(io.BytesIO(template_bytes))
     ws = wb[find_template_sheet(wb)]
 
-    # Ensure default prep/label owners are present on the template sheet
-    # so that generated manifests always match the latest Amazon format.
-    if ws.cell(row=3, column=1).value is None:
-        ws.cell(row=3, column=1).value = "Default prep owner"
-        ws.cell(row=3, column=2).value = "Seller"
-    if ws.cell(row=4, column=1).value is None:
-        ws.cell(row=4, column=1).value = "Default labeling owner"
-        ws.cell(row=4, column=2).value = "Seller"
-
+    ensure_default_owners(ws)
     hr = find_header_row(ws)
     style_ref_sku = ws.cell(row=hr + 1, column=1)
     style_ref_qty = ws.cell(row=hr + 1, column=2)
