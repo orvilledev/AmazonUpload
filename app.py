@@ -451,6 +451,16 @@ def build_manifest(template_bytes: bytes, pg_rows: pd.DataFrame) -> bytes:
     pg_rows = aggregate_pg_rows(pg_rows)
     wb = load_workbook(io.BytesIO(template_bytes))
     ws = wb[find_template_sheet(wb)]
+
+    # Ensure default prep/label owners are present on the template sheet
+    # so that generated manifests always match the latest Amazon format.
+    if ws.cell(row=3, column=1).value is None:
+        ws.cell(row=3, column=1).value = "Default prep owner"
+        ws.cell(row=3, column=2).value = "Seller"
+    if ws.cell(row=4, column=1).value is None:
+        ws.cell(row=4, column=1).value = "Default labeling owner"
+        ws.cell(row=4, column=2).value = "Seller"
+
     hr = find_header_row(ws)
     style_ref_sku = ws.cell(row=hr + 1, column=1)
     style_ref_qty = ws.cell(row=hr + 1, column=2)
